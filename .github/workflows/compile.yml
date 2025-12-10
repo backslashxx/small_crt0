@@ -1,0 +1,54 @@
+name: build binaries
+
+on:
+  push:
+    branches: master
+    paths-ignore: 
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: master
+
+      - name: grab sstrip from ELFkickers
+        run: |
+          curl -L https://www.muppetlabs.com/~breadbox/pub/software/ELFkickers-3.2.tar.gz -o sstrip.tar.gz
+          tar xf sstrip.tar.gz
+          make -C ELFkickers-3.2 sstrip
+          cp ELFkickers-3.2/sstrip/sstrip .
+
+      - name: compile via zigcc
+        run: |
+          echo "building..."
+          pwd
+          chmod +x sstrip
+
+          zig cc -target aarch64-linux -Oz -s -static -Wl,--entry=__start,--gc-sections,--strip-all,-z,norelro -fno-unwind-tables -fmerge-all-constants -flto small_start.c -o small_start-aarch64
+          zig cc -target arm-linux -Oz -s -static -Wl,--entry=__start,--gc-sections,--strip-all,-z,norelro -fno-unwind-tables -fmerge-all-constants -flto small_start.c -o small_start-arm
+          zig cc -target x86_64-linux -Oz -s -static -Wl,--entry=__start,--gc-sections,--strip-all,-z,norelro -fno-unwind-tables -fmerge-all-constants -flto small_start.c -o small_start-x64
+
+          wc -c small_start-*
+          
+          for file in small_start-*; do ./sstrip -z $file; done
+          
+          wc -c small_start-*
+          file small_start-*
+          mkdir binaries
+          mv -f small_start-* binaries/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive
+          path: binaries/
+
+
