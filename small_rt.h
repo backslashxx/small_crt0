@@ -6,7 +6,7 @@
 
 // syscall de-wrappers
 #if defined(__aarch64__)
-__attribute__((noinline))
+__attribute__((noinline, noipa))
 static long __syscall(long n, long a, long b, long c, long d, long e, long f)
 {
 	register long 
@@ -27,7 +27,7 @@ static long __syscall(long n, long a, long b, long c, long d, long e, long f)
 }
 
 #elif defined(__arm__)
-__attribute__((noinline))
+__attribute__((noinline, noipa))
 static long __syscall(long n, long a, long b, long c, long d, long e, long f) {
 	register long
 		r7 asm("r7") = n,
@@ -47,7 +47,7 @@ static long __syscall(long n, long a, long b, long c, long d, long e, long f) {
 }
 
 #elif defined(__x86_64__)
-__attribute__((noinline))
+__attribute__((noinline, noipa))
 static long __syscall(long n, long a, long b, long c, long d, long e, long f) {
 	long ret;
 	asm volatile(

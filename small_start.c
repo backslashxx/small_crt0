@@ -1,6 +1,6 @@
 #include "small_rt.h"
 // zig cc -target aarch64-linux -Oz -s -static -Wl,--entry=__start,--gc-sections,--strip-all,-z,norelro -fno-unwind-tables -fmerge-all-constants -flto small_start.c -o small_start 
-// gcc -Oz -s -static -Wl,--gc-sections,-z,norelro -fno-unwind-tables -Wl,--entry=__start -flto -nostartfiles -ffreestanding -fmerge-all-constants -fno-ipa-ra small_start.c -o small_start-x64
+// gcc -Oz -s -static -Wl,--gc-sections,-z,norelro -fno-unwind-tables -Wl,--entry=__start -flto -nostartfiles -ffreestanding -fmerge-all-constants small_start.c -o small_start-x64
 
 // youre in C at this point
 __attribute__((always_inline))
