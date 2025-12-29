@@ -4,6 +4,10 @@
 
 #define NONE 0
 
+#ifndef asm
+#define asm __asm__
+#endif
+
 // syscall de-wrappers
 #if defined(__aarch64__)
 __attribute__((noinline, noipa))
